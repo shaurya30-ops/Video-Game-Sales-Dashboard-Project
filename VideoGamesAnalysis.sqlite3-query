@@ -1,0 +1,129 @@
+-- database: ./videogames.db
+
+-- Use the ▷ button in the top right corner to run the entire file.
+
+SELECT * FROM video_game_sales;
+SELECT DISTINCT Year_of_Release
+FROM video_game_sales
+WHERE Year_of_Release IS NULL OR Year_of_Release = 'N/A';
+SELECT COUNT(*)
+FROM video_game_sales
+WHERE Critic_Score IS NULL OR Critic_Score ='N/A';
+SELECT COUNT(*)
+FROM video_game_sales
+WHERE User_Score IS NULL OR User_Score ='N/A';
+SELECT COUNT(*)
+FROM video_game_sales
+WHERE Publisher IS NULL OR Publisher = '';
+SELECT *
+FROM video_game_sales
+WHERE Publisher IS  NOT NULL AND Publisher !='';
+UPDATE video_game_sales
+SET Year_of_Release ='Unknown'
+WHERE Year_of_Release IS NULL OR Year_of_Release ='';
+UPDATE video_game_sales
+SET Publisher = 'Unknown'
+WHERE Publisher IS NULL OR Publisher = '';
+UPDATE video_game_sales
+SET Critic_Score = 'NULL'
+WHERE Critic_Score IS NULL OR Critic_Score ='';
+UPDATE video_game_sales
+SET Critic_Count = 'NULL'
+WHERE Critic_Count IS NULL OR Critic_Count ='';
+UPDATE video_game_sales
+SET User_Score = 'NULL'
+WHERE User_Score IS NULL OR User_Score ='';
+UPDATE video_game_sales
+SET Developer = '---'
+WHERE Developer IS NULL OR Developer = '';
+UPDATE video_game_sales
+SET Rating = '---'
+WHERE Rating IS NULL OR Rating = '';
+SELECT AVG(CAST(Global_sales AS REAL))
+FROM video_game_sales;
+SELECT SUM(Global_Sales) AS Total_Global_Sales_Millions
+FROM video_game_sales;
+SELECT SUM(NA_Sales) AS Total_NA_Sales_Millions,
+SUM(EU_Sales) AS Total_EU_Sales_Millions,
+SUM(JP_Sales) AS Total_JP_Sales_Millions,
+SUM(Other_Sales) AS Total_Other_Sales_Millions,
+Sum(Global_Sales) AS Total_Global_Sales_Millions
+FROM video_game_sales;
+SELECT Genre, SUM(Global_Sales) AS Total_Global_Sales
+FROM video_game_sales
+GROUP BY Genre
+ORDER BY Total_Global_Sales DESC
+LIMIT 12;
+SELECT Platform, SUM(Global_Sales) AS Total_Global_Sales
+FROM video_game_sales
+GROUP BY Platform
+ORDER BY Total_Global_Sales DESC
+LIMIT 31;
+SELECT Publisher,
+SUM(Global_Sales) AS Total_Global_Sales
+FROM video_game_sales
+WHERE Publisher IS NOT NULL
+GROUP BY Publisher
+ORDER BY Total_Global_Sales
+LIMIT 10;
+SELECT
+    CAST(Year_of_Release AS INTEGER) AS Release_Year,
+    SUM(Global_Sales) AS Total_Global_Sales
+FROM
+    video_game_sales
+WHERE
+    Year_of_Release IS NOT NULL AND Year_of_Release!= '0' 
+GROUP BY
+    Release_Year
+ORDER BY
+    Release_Year ASC;
+SELECT
+    CAST(Year_of_Release AS INTEGER) AS Release_Year,
+    SUM(CASE WHEN Genre = 'Action' THEN Global_Sales ELSE 0 END) AS Action_Sales,
+    SUM(CASE WHEN Genre = 'Sports' THEN Global_Sales ELSE 0 END) AS Sports_Sales,
+    SUM(Global_Sales) AS Total_Sales_All_Genres
+FROM
+    video_game_sales
+WHERE
+    Year_of_Release IS NOT NULL AND Year_of_Release!= 'N/A'
+GROUP BY
+    Release_Year
+ORDER BY
+    Release_Year ASC;
+    SELECT
+    Genre,
+    AVG(Critic_Score) AS Avg_Critic_Score,
+    AVG(User_Score) AS Avg_User_Score
+FROM
+    video_game_sales
+WHERE
+    Critic_Score IS NOT NULL AND User_Score IS NOT NULL -- Only include games with both scores
+GROUP BY
+    Genre
+ORDER BY
+    Avg_Critic_Score DESC;
+    SELECT
+    Name,
+    Platform,
+    Genre,
+    Critic_Score,
+    Global_Sales
+FROM
+    video_game_sales
+WHERE
+    Critic_Score IS NOT NULL
+ORDER BY
+    Critic_Score DESC, Global_Sales DESC
+LIMIT 10;
+-- Prepare data for correlation analysis in another tool
+SELECT
+    Critic_Score,
+    User_Score,
+    Global_Sales
+FROM
+    video_game_sales
+WHERE
+    Critic_Score IS NOT NULL AND User_Score IS NOT NULL AND Global_Sales IS NOT NULL;
+
+
+
